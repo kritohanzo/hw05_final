@@ -55,7 +55,7 @@ class Post(CreatedModel):
         return self.text[:SLICE_OF_THE_FOUND_POST]
 
     def get_absolute_url(self):
-        return reverse("posts:post_detail", args=[self.id])
+        return reverse("posts:profile", args=[self.author.username])
 
 
 class Comment(CreatedModel):

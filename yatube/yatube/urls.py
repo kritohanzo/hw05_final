@@ -12,6 +12,7 @@ urlpatterns = [
     path("about/", include("about.urls", namespace="about")),
 ]
 
+handler403 = "core.views.forbidden"
 handler404 = "core.views.page_not_found"
 
 if settings.DEBUG:

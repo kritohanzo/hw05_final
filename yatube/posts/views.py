@@ -110,18 +110,6 @@ def post_edit(request, post_id):
     return render(request, template, context)
 
 
-# @login_required
-# def add_comment(request, post_id):
-#     post = Post.objects.get(pk=post_id)
-#     form = CommentForm(request.POST or None)
-#     if form.is_valid():
-#         comment = form.save(commit=False)
-#         comment.author = request.user
-#         comment.post = post
-#         comment.save()
-#     return redirect('posts:post_detail', post_id=post_id)
-
-
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
@@ -147,7 +135,11 @@ def follow_index(request):
 def profile_follow(request, username):
     author = User.objects.get(username=username)
     user = request.user
-    Follow.objects.create(author=author, user=user)
+    try:
+        Follow.objects.get(author=author.id, user=user.id)
+    except Follow.DoesNotExist:
+        if author != user:
+            Follow.objects.create(author=author, user=user)
     return redirect("posts:profile", username=username)
 
 
