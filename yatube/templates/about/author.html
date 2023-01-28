@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Об авторе проекта{% endblock %}
+{% block content %}
+    <div class="col-12">
+        <div class="d-flex flex-column text-center justify-content-center align-content-center">
+            <h1>Привет, я автор</h1>
+            <p>
+                Я очень старался, делая этот спринт.
+                <br>
+                В связи с тем, что учёба в университете в последние недели семестра очень жёсткая - пришлось отстать.
+                <br>
+                Я очень люблю котиков, поэтому хотел бы, чтобы вы тоже посмотрели на них.
+                <br>
+                <img src="{% static 'img/cat.jpg' %}">
+                <br>
+                Спасибо, что посмотрели!
+            </p>
+        </div>
+    </div>
+{% endblock %}

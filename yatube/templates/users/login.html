@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load user_filters %}
+{% block title %}Войти{% endblock %}
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-8 p-5">
+            <div class="card">
+                <div class="card-header">Войти на сайт</div>
+                <div class="card-body">
+                    {% if form.errors %}
+                        {% for field in form %}
+                            {% for error in field.errors %}<div class="alert alert-danger">{{ error|escape }}</div>{% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}<div class="alert alert-danger">{{ error|escape }}</div>{% endfor %}
+                    {% endif %}
+                    {% with action_form='/auth/login/' form_button='Войти' form_href='Забыли пароль?' %}
+                        {% include 'users/includes/form.html' %}
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
