@@ -78,6 +78,10 @@ class Comment(CreatedModel):
         help_text="Текст комментария, который увидят пользователи",
     )
 
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+
     def get_absolute_url(self):
         return reverse("posts:post_detail", args=[self.post.id])
 
@@ -95,3 +99,12 @@ class Follow(models.Model):
         related_name="following",
         verbose_name="Автор",
     )
+
+    class Meta:
+        verbose_name = "Пользовательская подписка"
+        verbose_name_plural = "Пользовательские подписки"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="unique following"
+            )
+        ]

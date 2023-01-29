@@ -10,7 +10,7 @@
                 {{ username.username }}
             {% endif %}
         </h1>
-        <h3>Всего постов: {{ page_obj.paginator.count }}</h3>
+        <h3>Всего постов: {{ posts_count }}</h3>
         {% if following %}
         <a
         class="btn btn-lg btn-light"

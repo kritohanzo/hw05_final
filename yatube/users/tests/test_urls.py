@@ -11,9 +11,7 @@ class TestURLUsers(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-
         cls.guest_client = Client()
-
         cls.user = User.objects.create_user(username="auth")
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
@@ -31,7 +29,6 @@ class TestURLUsers(TestCase):
             "/auth/password_reset/done/": HTTPStatus.OK,
             "/auth/reset/done/": HTTPStatus.OK,
         }
-
         for url, status in urls.items():
             with self.subTest(url=url):
                 response = self.guest_client.get(url)

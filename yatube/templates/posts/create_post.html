@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load user_filters %}
 {% block title %}
-  {% if is_edit == 1 %}
+  {% if is_edit %}
     Редактирование записи
   {% else %}
     Новая запись
@@ -12,7 +12,7 @@
     <div class="col-md-8 p-5">
       <div class="card">
         <div class="card-header">
-          {% if is_edit == 1 %}
+          {% if is_edit %}
             Редактирование записи
           {% else %}
             Новая запись
@@ -26,7 +26,7 @@
             {% for error in form.non_field_errors %}<div class="alert alert-danger">{{ error|escape }}</div>{% endfor %}
           {% endif %}
           <form method="post"
-                action=" {% if is_edit == 1 %} {% url 'posts:post_edit' post_id=post.id %} {% else %} {% url 'posts:post_create' %} {% endif %}" enctype="multipart/form-data">
+                action=" {% if is_edit %} {% url 'posts:post_edit' post_id=post.id %} {% else %} {% url 'posts:post_create' %} {% endif %}" enctype="multipart/form-data">
             {% csrf_token %}
             {% for field in form %}
               <div class="form-group row my-3"
@@ -45,7 +45,7 @@
             {% endfor %}
             <div class="d-flex justify-content-end">
               <button type="submit" class="btn btn-primary">
-                {% if is_edit == 1 %}
+                {% if is_edit %}
                   Сохранить
                 {% else %}
                   Добавить

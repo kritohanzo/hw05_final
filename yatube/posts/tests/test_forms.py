@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from posts.models import Group, Post
+from posts.models import Group, Post, Comment
 
 
 User = get_user_model()
@@ -14,6 +14,7 @@ class TestPostsForms(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create_user(username="Dimon")
+        cls.guest_client = Client()
         cls.auth_client = Client()
         cls.auth_client.force_login(cls.user)
         cls.group = Group.objects.create(
@@ -72,7 +73,6 @@ class TestPostsForms(TestCase):
         через форму PostForm создаётся запись в базе данных.
         """
         count = Post.objects.count()
-
         small_gif = (
             b"\x47\x49\x46\x38\x39\x61\x02\x00"
             b"\x01\x00\x80\x00\x00\x00\x00\x00"
@@ -81,7 +81,6 @@ class TestPostsForms(TestCase):
             b"\x02\x00\x01\x00\x00\x02\x02\x0C"
             b"\x0A\x00\x3B"
         )
-
         uploaded = SimpleUploadedFile(
             name="small.gif", content=small_gif, content_type="image/gif"
         )
@@ -95,3 +94,22 @@ class TestPostsForms(TestCase):
         self.assertEqual(
             new_count, count + 1, "Посты с картинками не создаются."
         )
+
+    def test_posts_comments_login_required(self):
+        """
+        Проверяем, что только авторизированный
+        пользователь может оставить комментарий.
+        """
+        count = Comment.objects.count()
+        self.auth_client.post(
+            reverse("posts:add_comment", kwargs={"post_id": self.post.id}),
+            data={"text": "Всем привет, я тестовый комментарий"},
+        )
+        new_count = Comment.objects.count()
+        self.assertEqual(new_count, count + 1)
+        self.guest_client.post(
+            reverse("posts:add_comment", kwargs={"post_id": self.post.id}),
+            data={"text": "Всем привет, я тестовый комментарий 2"},
+        )
+        new_count = Comment.objects.count()
+        self.assertEqual(new_count, count + 1)

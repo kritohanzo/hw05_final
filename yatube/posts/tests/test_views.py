@@ -172,7 +172,7 @@ class TestPostsView(TestCase):
         pages = {
             "posts:index": {},
             "posts:group_list": {"slug": self.post.group.slug},
-            "posts:profile": {"username": self.post.author},
+            "posts:profile": {"username": self.post.author.username},
         }
 
         for page, args in pages.items():
@@ -229,28 +229,37 @@ class TestPostsImage(TestCase):
     def setUp(self):
         cache.clear()
 
-    def test_posts_image_in_context(self):
+    def test_posts_image_in_context_first(self):
         """
         Проверяем, что при выводе поста с картинкой
         изображение передаётся в словаре context.
         """
-        urls = {
-            "/": "self.auth_client.get(url)"
-            ".context['page_obj'][self.post.id-1].image",
-            f"/profile/{self.post.author}/": "self.auth_client.get(url)"
-            ".context['page_obj'][self.post.id-1].image",
-            f"/group/{self.group.slug}/": "self.auth_client.get(url)"
-            ".context['page_obj'][self.post.id-1].image",
-            f"/posts/{self.post.id}/": "self.auth_client.get(url)"
-            ".context[0]['post'].image",
-        }
-        for url, expected in urls.items():
-            with self.subTest(url=url, expected=expected):
+        urls = [
+            "/",
+            f"/profile/{self.post.author}/",
+            f"/group/{self.group.slug}/",
+        ]
+
+        for url in urls:
+            with self.subTest(url=url):
+                response = self.auth_client.get(url)
                 self.assertEqual(
                     self.post.image,
-                    eval(expected),
+                    response.context["page_obj"][self.post.id - 1].image,
                     f"Со страницей {url} произошла ошибка.",
                 )
+
+    def test_posts_image_in_context_second(self):
+        """
+        Проверяем, что при выводе поста с картинкой
+        изображение передаётся в словаре context.
+        """
+        response = self.auth_client.get(f"/posts/{self.post.id}/")
+        self.assertEqual(
+            self.post.image,
+            response.context[0]["post"].image,
+            f"Со страницей /posts/{self.post.id}/ произошла ошибка.",
+        )
 
 
 class TestPostsCommnets(TestCase):
@@ -353,7 +362,6 @@ class TestPostsFollows(TestCase):
         может подписываться на других пользователей
         и удалять их из подписок.
         """
-
         self.second_auth_client.get(
             reverse(
                 "posts:profile_follow",
@@ -383,7 +391,6 @@ class TestPostsFollows(TestCase):
     def test_posts_followed_users_see_only_needed_posts(self):
         """Проверяем, что новая запись пользователя появляется в ленте тех,
         кто на него подписан и не появляется в ленте тех, кто не подписан."""
-
         self.second_auth_client.post(
             reverse("posts:post_create"),
             data={"text": "hello, my subcribers 1"},
