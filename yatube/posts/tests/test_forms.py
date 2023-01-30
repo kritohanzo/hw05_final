@@ -3,7 +3,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from posts.models import Group, Post, Comment
+from posts.models import Comment, Group, Post
 
 
 User = get_user_model()
@@ -107,9 +107,19 @@ class TestPostsForms(TestCase):
         )
         new_count = Comment.objects.count()
         self.assertEqual(new_count, count + 1)
+
+    def test_posts_comments_guest_client(self):
+        """
+        Проверяем, что неавторизированный
+        пользователь не может оставить комментарий.
+        """
+        count = Comment.objects.count()
         self.guest_client.post(
             reverse("posts:add_comment", kwargs={"post_id": self.post.id}),
-            data={"text": "Всем привет, я тестовый комментарий 2"},
+            data={
+                "text": "Всем привет, "
+                "я тестовый комментарий от анонимного юзера"
+            },
         )
         new_count = Comment.objects.count()
-        self.assertEqual(new_count, count + 1)
+        self.assertEqual(new_count, count)

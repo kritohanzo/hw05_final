@@ -15,6 +15,7 @@ class GroupAdmin(admin.ModelAdmin):
     list_display = ("pk", "title", "slug", "description")
     search_fields = ("title",)
     list_editable = ("title", "slug", "description")
+    prepopulated_fields = {"slug": ("title",)}
     empty_value_display = "-пусто-"
 
 

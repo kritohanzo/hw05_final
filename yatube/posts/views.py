@@ -20,7 +20,7 @@ def paginate_posts(queryset, page_number):
 
 @cache_page(20, key_prefix="index_page")
 def index(request):
-    posts = Post.objects.select_related("group").select_related("author").all()
+    posts = Post.objects.select_related("group", "author")
     page_number = request.GET.get("page")
     page_obj = paginate_posts(posts, page_number)
     template = "posts/index.html"
@@ -30,7 +30,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    posts = group.posts.select_related("author").all()
+    posts = group.posts.select_related("author")
     page_number = request.GET.get("page")
     page_obj = paginate_posts(posts, page_number)
     template = "posts/group_list.html"
@@ -40,7 +40,7 @@ def group_posts(request, slug):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    posts = author.posts.select_related("group").all()
+    posts = author.posts.select_related("group")
     page_number = request.GET.get("page")
     page_obj = paginate_posts(posts, page_number)
     posts_count = page_obj.paginator.count

@@ -105,6 +105,6 @@ class Follow(models.Model):
         verbose_name_plural = "Пользовательские подписки"
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "author"], name="unique following"
+                fields=["user", "author"], name="uq_user_author"
             )
         ]
